@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/MainMenuStyle.uss?fileID=7433441132597879392&amp;guid=df72ac37c3692453385244eac7e5c464&amp;type=3#MainMenuStyle" />
+    <ui:VisualElement name="Container" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/TextMesh%20Pro/Examples%20&amp;%20Extras/Textures/PlaceHolderMainMenu.png?fileID=2800000&amp;guid=e723ce14370ae4b6e9a54fd7f2eefbdb&amp;type=3#PlaceHolderMainMenu&quot;); -unity-background-image-tint-color: rgb(123, 123, 123);">
+        <ui:Label text="Teel Code" class="header" />
+        <ui:Button text="PLAY" name="StartGame" enable-rich-text="false" class="button" style="margin-top: 45px;" />
+        <ui:Button text="Settings" name="Settings" class="button" />
+    </ui:VisualElement>
+</ui:UXML>
