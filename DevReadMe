@@ -1,0 +1,18 @@
+To dowload code:
+  Open terminal
+  run "git clone https://github.com/willbubger/TeelCode.git"
+    That’ll create a folder like: /Users/yourname/Desktop/TeelCode/
+  Open Unity Hub
+    Click Add project from disk
+    Navigate to the cloned folder
+    Select it
+    Unity will import and generate all the local cache files
+
+To commit changes:
+  Navigate to "/Users/yourname/Desktop/TeelCode/" in your terminal
+  git add .
+  git commit -m "Added new question system"
+  git push origin main
+
+BEFORE EDITING ANYTHING:
+  run "git pull origin main" on your teelcode folder to make sure you're editing the most up to date version
