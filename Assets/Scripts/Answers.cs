@@ -16,6 +16,7 @@ public class Answers : MonoBehaviour
         else
         {
             quizManager.livesLeft--;
+            quizManager.UpdateLivesUI();
             if(quizManager.livesLeft > 0)
             {
                 Debug.Log("Wrong Answer, you lost a life!" + " Lives left: " + quizManager.livesLeft);
