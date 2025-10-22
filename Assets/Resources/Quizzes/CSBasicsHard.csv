@@ -1,0 +1,6 @@
+Question,Answer1,Answer2,Answer3,Answer4,CorrectIndex
+What is the worst-case time complexity of quicksort?,O(n log n),O(n^2),O(n),O(log n),1
+Which of the following is NOT a characteristic of object-oriented programming?,Encapsulation,Polymorphism,Recursion,Inheritance,2
+What is a primary key in a database?,A field that uniquely identifies a record,The main data table name,A relationship between tables,A record’s storage address,0
+What is a deadlock in concurrent programming?,A memory leak during runtime,Two or more processes waiting indefinitely for each other,Thread synchronization success,An infinite recursion error,1
+Which of the following describes a compiler?,A tool that converts high-level code into machine code,A program that executes bytecode directly,An interpreter for source code,A database query optimizer,0

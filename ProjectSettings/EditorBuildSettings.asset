@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: 3712f682316df412a97a671517d4e268
   - enabled: 1
+    path: Assets/Scenes/Town Square.unity
+    guid: 85788d667b52f4721941af3db6d5115b
+  - enabled: 1
     path: Assets/Scenes/Quiz.unity
     guid: 59ba663d6699e4243a6c202400116770
   m_configObjects:

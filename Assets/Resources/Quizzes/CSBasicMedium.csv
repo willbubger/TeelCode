@@ -1,0 +1,6 @@
+Question,Answer1,Answer2,Answer3,Answer4,CorrectIndex
+Which logic gate outputs true only when both inputs are true?,OR,AND,NOR,XOR,1
+What does an operating system do?,Runs the CPU,Manages hardware and software resources,Executes BIOS routines only,Stores permanent data,1
+What is the purpose of an algorithm?,To provide random outputs,To describe a step-by-step problem-solving process,To define hardware behavior,To store user data,1
+Which data structure follows the FIFO principle?,Stack,Queue,Tree,Graph,1
+Which sorting algorithm generally has O(n log n) complexity?,Bubble Sort,Insertion Sort,Quick Sort,Selection Sort,2

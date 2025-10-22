@@ -27,35 +27,37 @@ public class QuizManager : MonoBehaviour
             livesText.text = "Lives: " + livesLeft;
     }
 
-    private void Start()
-    {
-        livesLeft = 3;
-        UpdateLivesUI();
+private void Start()
+{
+    livesLeft = 3;
+    UpdateLivesUI();
 
-        // ✅ Load quiz data from CSV first
-        if (quizFile != null)
+    // ✅ Load quiz data from CSV first
+    if (quizFile != null)
+    {
+        LoadQuizFromCSV(quizFile);
+    }
+    else
+    {
+        // Default load from Resources folder (in case not assigned)
+        string selectedQuiz = PlayerPrefs.GetString("SelectedQuiz", "CSBasics");
+        Debug.Log("Selected quiz: " + selectedQuiz);
+
+        TextAsset csv = Resources.Load<TextAsset>($"Quizzes/{selectedQuiz}");
+        if (csv != null)
         {
-            LoadQuizFromCSV(quizFile);
+            LoadQuizFromCSV(csv);
+            questionsLeft = QnA.Count;
+            QnA = QnA.OrderBy(q => Random.value).ToList();
+            GenerateQuestion();
         }
         else
         {
-            // Default load from Resources folder (in case not assigned)
-            TextAsset csv = Resources.Load<TextAsset>("Quizzes/BasicQuiz");
-            if (csv != null)
-            {
-                LoadQuizFromCSV(csv);
-            }
-            else
-            {
-                Debug.LogError("No quiz file assigned or found in Resources/Quizzes/");
-                return;
-            }
+            Debug.LogError($"⚠️ Could not load quiz: {selectedQuiz}");
+            return;
         }
+    }
 
-        // ✅ Once loaded, shuffle and start quiz
-        questionsLeft = QnA.Count;
-        QnA = QnA.OrderBy(q => Random.value).ToList();
-        GenerateQuestion();
     }
 
     // ✅ Reads CSV and populates QnA list
