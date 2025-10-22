@@ -7,4 +7,8 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("Town Square");
     }
+    public void BackToTown()
+    {
+        SceneManager.LoadScene("Town Square");
+    }
 }
