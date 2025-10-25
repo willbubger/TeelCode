@@ -12,6 +12,7 @@ public class QuizMenu : MonoBehaviour
     [Header("Panels")]
     public GameObject mainPanel;
     public GameObject questPanel;
+    public GameObject cosmeticPanel;
 
     void Start()
     {
@@ -30,8 +31,15 @@ public class QuizMenu : MonoBehaviour
 
     public void ShowMainPanel()
     {
-        mainPanel.SetActive(true);
         questPanel.SetActive(false);
+        cosmeticPanel.SetActive(false);
+        mainPanel.SetActive(true);
+    }
+
+    public void ShowCosmeticPanel()
+    {
+        mainPanel.SetActive(false);
+        cosmeticPanel.SetActive(true);
     }
 
     // -----------------------------
