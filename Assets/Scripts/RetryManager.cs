@@ -8,6 +8,11 @@ public class RetryManager : MonoBehaviour
         SceneManager.LoadScene("Quiz");
     }
     
+    public void ReturnTown()
+    {
+        SceneManager.LoadScene("Town Square");
+    }
+
     public void Quit()
     {
         SceneManager.LoadScene("Main Menu");

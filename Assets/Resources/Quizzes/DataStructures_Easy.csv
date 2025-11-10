@@ -1,0 +1,6 @@
+Question,Answer1,Answer2,Answer3,Answer4,CorrectIndex
+Which data structure uses FIFO (First In, First Out) order?,Stack,Queue,Tree,Graph,1
+Which data structure uses LIFO (Last In, First Out) order?,Array,Queue,Stack,Linked List,2
+Which data structure is best suited for implementing recursion?,Queue,Stack,Array,Hash Table,1
+Which of the following is a linear data structure?,Tree,Graph,Linked List,Heap,2
+In a singly linked list, each node contains?,Data only,Data and one pointer,Data and two pointers,Only pointers,1
