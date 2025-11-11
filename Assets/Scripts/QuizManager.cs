@@ -18,8 +18,6 @@ public class QuizManager : MonoBehaviour
 
     public TextMeshProUGUI QuestionText;
     public int livesLeft;
-
-    // 👇 assign this in the Inspector or load dynamically later
     public TextAsset quizFile;
     public void UpdateLivesUI()
     {
@@ -66,7 +64,7 @@ private void Start()
         QnA = new List<QuestionAndAnswers>();
         string[] lines = csvFile.text.Split('\n');
 
-        for (int i = 1; i < lines.Length; i++) // skip header
+        for (int i = 3; i < lines.Length; i++) // skip header
         {
             string line = lines[i].Trim();
             if (string.IsNullOrWhiteSpace(line)) continue;

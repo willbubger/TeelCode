@@ -25,4 +25,6 @@ public class SSkinInfo : ScriptableObject
 
     [Tooltip("Optional display name for editor clarity.")]
     public string displayName;
+    [Tooltip("Minimum player level required to unlock this skin.")]
+    public int requiredLevel = 0;
 }

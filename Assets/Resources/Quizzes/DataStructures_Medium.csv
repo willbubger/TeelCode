@@ -1,3 +1,5 @@
+RequiredLevel,4
+RecommendedProficiency,35
 Question,Answer1,Answer2,Answer3,Answer4,CorrectIndex
 What is the time complexity of searching an element in a balanced binary search tree?,O(n),O(log n),O(1),O(n log n),1
 Which traversal of a binary tree gives nodes in sorted order (for BST)?,Preorder,Postorder,Inorder,Level order,2

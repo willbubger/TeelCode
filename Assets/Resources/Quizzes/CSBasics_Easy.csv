@@ -1,3 +1,5 @@
+RequiredLevel,1
+RecommendedProficiency,0
 Question,Answer1,Answer2,Answer3,Answer4,CorrectIndex
 What does CPU stand for?,Central Processing Unit,Computer Processing Utility,Central Programming Unit,Core Peripheral Unit,0
 Which of these is a type of computer memory?,SSD,CPU,GPU,Keyboard,0

@@ -13,6 +13,7 @@ public class QuizMenu : MonoBehaviour
     public GameObject quizButtonTemplate;
     public Transform quizContainer;
     public TextMeshProUGUI LeaderboardText;
+    public TextMeshProUGUI LowLevelText;
 
     [Header("Panels")]
     public GameObject mainPanel;
@@ -135,14 +136,64 @@ public class QuizMenu : MonoBehaviour
 
     public void LoadQuiz(string quizName)
     {
+        Debug.Log($"[QUIZ] PlayerDataHolder.CurrentPlayer = {(PlayerDataHolder.CurrentPlayer == null ? "NULL" : PlayerDataHolder.CurrentPlayer.username)}");
         Debug.Log($"Loading quiz: {quizName}");
 
-        // Save which quiz the user picked
-        PlayerPrefs.SetString("SelectedQuiz", quizName);
-        PlayerPrefs.Save();
+        TextAsset quizFile = Resources.Load<TextAsset>($"Quizzes/{quizName}");
+        if (quizFile == null)
+        {
+            Debug.LogError($"❌ Quiz file not found: Resources/Quizzes/{quizName}");
+            return;
+        }
 
-        // Load your actual quiz gameplay scene
-        SceneManager.LoadScene("Quiz");
+        int requiredLevel = GetRequiredLevel(quizFile);
+
+        /*
+        if (Login.CurrentPlayer == null)
+        {
+            Debug.LogError("❌ No current player loaded. You probably ran this scene directly without logging in first.");
+            return;
+        }
+        */
+
+        if (PlayerDataHolder.CurrentPlayer.level >= requiredLevel)
+        {
+            PlayerPrefs.SetString("SelectedQuiz", quizName);
+            PlayerPrefs.Save();
+            SceneManager.LoadScene("Quiz");
+        }
+        else
+        {
+            ShowLevelTooLowMessage(requiredLevel);
+        }
+    }
+
+
+    int GetRequiredLevel(TextAsset quiz)
+    {
+        string[] lines = quiz.text.Split('\n');
+        foreach (string rawLine in lines)
+        {
+            string line = rawLine.Trim();
+            if (line.StartsWith("RequiredLevel"))
+            {
+                string[] parts = line.Split(',');
+                if (parts.Length > 1 && int.TryParse(parts[1], out int level))
+                    return level;
+            }
+
+            // stop scanning once we hit question header
+            if (line.StartsWith("Question"))
+                break;
+        }
+        return 1; // default if not found
+    }
+
+    void ShowLevelTooLowMessage(int requiredLevel)
+    {
+        LowLevelText.text = $"You need to be at least level {requiredLevel} to access this quiz.";
+        LowLevelText.gameObject.SetActive(true);
+        Debug.Log($"You need to be at least level {requiredLevel} to access this quiz.");
     }
 
     // Optional: add a "Back" button in UI to return to categories
@@ -181,7 +232,7 @@ public class QuizMenu : MonoBehaviour
                 PlayerList leaderboard = JsonUtility.FromJson<PlayerList>(json);
 
                 string output = "";
-                foreach (Player p in leaderboard.players)
+                foreach (LeaderboardPlayer p in leaderboard.players)
                 {
                     output += $"{p.username}: Level {p.level}\n";
                 }

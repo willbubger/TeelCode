@@ -6,7 +6,7 @@ using TMPro;
 using System.Text;
 
 [System.Serializable]
-public class Player
+public class LeaderboardPlayer
 {
     public string username;
     public int level;
@@ -17,7 +17,7 @@ public class Player
 [System.Serializable]
 public class PlayerList
 {
-    public Player[] players;
+    public LeaderboardPlayer[] players;
 }
 
 public class LeaderboardScript : MonoBehaviour
@@ -53,7 +53,7 @@ public class LeaderboardScript : MonoBehaviour
                 PlayerList leaderboard = JsonUtility.FromJson<PlayerList>(json);
 
                 string output = "";
-                foreach (Player p in leaderboard.players)
+                foreach (LeaderboardPlayer p in leaderboard.players)
                 {
                     output += $"{p.username}: Level {p.level}\n";
                 }

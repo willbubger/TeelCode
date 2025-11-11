@@ -12,8 +12,14 @@ public class Login : MonoBehaviour
     TMP_InputField PassField;
     public GameObject FailureText;
     public GameObject RegisterPanel;
+    public static PlayerStats CurrentPlayer; 
     public String username;
     public String password;
+
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
 
     void Start()
     {
@@ -62,9 +68,35 @@ public class Login : MonoBehaviour
                 Debug.LogError($"{request.responseCode}: {request.error}\n{request.downloadHandler.text}");
             else
                 if (request.responseCode == 200)
-                    SceneManager.LoadScene("Town Square");
-                FailureText.SetActive(true);
-                //Debug.Log("Login Response: " + request.downloadHandler.text);
+            {
+                string json = request.downloadHandler.text;
+                Debug.Log(json);
+                PlayerDataHolder.CurrentPlayer = JsonUtility.FromJson<PlayerStats>(json);
+                Debug.Log(PlayerDataHolder.CurrentPlayer.user_id);
+                yield return StartCoroutine(GetInfo_Coroutine());
+                SceneManager.LoadScene("Town Square");
+            }
+            FailureText.SetActive(true);
+            //Debug.Log("Login Response: " + request.downloadHandler.text);
         }
+    }
+
+    void GetInfo() => StartCoroutine(GetInfo_Coroutine());
+
+    IEnumerator GetInfo_Coroutine()
+    {
+        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/player/" + PlayerDataHolder.CurrentPlayer.user_id;
+
+        Debug.Log(uri);
+
+        using (UnityWebRequest request = UnityWebRequest.Get(uri))
+        {
+            yield return request.SendWebRequest();
+
+            string json = request.downloadHandler.text;
+            Debug.Log($"[INFO] Raw JSON: {json}");
+            PlayerDataHolder.CurrentPlayer = JsonUtility.FromJson<PlayerStats>(json);
+            Debug.Log("User level: " + PlayerDataHolder.CurrentPlayer.level + "!");
+            }
     }
 }

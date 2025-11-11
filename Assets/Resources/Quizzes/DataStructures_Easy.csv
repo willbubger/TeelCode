@@ -1,3 +1,5 @@
+RequiredLevel,2
+RecommendedProficiency,12
 Question,Answer1,Answer2,Answer3,Answer4,CorrectIndex
 Which data structure uses FIFO (First In, First Out) order?,Stack,Queue,Tree,Graph,1
 Which data structure uses LIFO (Last In, First Out) order?,Array,Queue,Stack,Linked List,2

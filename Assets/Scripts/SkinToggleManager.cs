@@ -8,8 +8,7 @@ public class SkinToggleManager : MonoBehaviour
 
     [Tooltip("Which index to show on Start (0-based).")]
     public int defaultIndex = 0;
-
-    const string PlayerPrefKey = "SelectedSkinIndex";
+    public List<SSkinInfo> skinInfos = new List<SSkinInfo>();
 
     void Start()
     {
@@ -19,36 +18,57 @@ public class SkinToggleManager : MonoBehaviour
             return;
         }
 
-        int saved = PlayerPrefs.GetInt(PlayerPrefKey, -1);
-        int index = (saved >= 0 && saved < skins.Count) ? saved : Mathf.Clamp(defaultIndex, 0, skins.Count - 1);
+        int index = Mathf.Clamp(defaultIndex, 0, skins.Count - 1);
         ShowSkin(index);
     }
 
     // Called from UI Buttons (via SkinButton or from Inspector)
     public void ShowSkin(int index)
     {
+        // 👇 This runs first every time you click a button
+        Debug.Log($"[{Time.frameCount}] Clicked skin #{index} | PlayerDataHolder loaded: {(PlayerDataHolder.CurrentPlayer != null)}");
+
         if (skins == null || skins.Count == 0)
         {
-            Debug.LogWarning("ShowSkin called but no skins are assigned.");
+            Debug.LogWarning("⚠️ Skins list empty or null!");
             return;
         }
 
         if (index < 0 || index >= skins.Count)
         {
-            Debug.LogWarning($"ShowSkin: index {index} out of range (0..{skins.Count - 1}).");
+            Debug.LogWarning($"⚠️ Invalid index {index} for skins list of size {skins.Count}.");
             return;
         }
 
-        for (int i = 0; i < skins.Count; i++)
+        // ✅ Level lock check
+        if (skinInfos != null && index < skinInfos.Count)
         {
-            var go = skins[i];
-            if (go == null) continue;
-            go.SetActive(i == index);
+            int requiredLevel = skinInfos[index].requiredLevel;
+            if (PlayerDataHolder.CurrentPlayer == null)
+            {
+                Debug.LogError("❌ No player data found. Can't check level.");
+                return;
+            }
+
+            int playerLevel = PlayerDataHolder.CurrentPlayer.level;
+            Debug.Log($"[SKIN CHECK] Player level {playerLevel} vs required {requiredLevel}");
+
+            if (playerLevel < requiredLevel)
+            {
+                Debug.Log($"⛔ Skin locked! Requires level {requiredLevel}, but player is only level {playerLevel}.");
+                return;
+            }
         }
 
-        PlayerPrefs.SetInt(PlayerPrefKey, index);
-        PlayerPrefs.Save();
+        // ✅ If unlocked, apply skin
+        for (int i = 0; i < skins.Count; i++)
+            if (skins[i] != null)
+                skins[i].SetActive(i == index);
+
+        Debug.Log($"✅ Equipped skin #{index}");
     }
+
+
 
     // Convenience: show by GameObject reference
     public void ShowSkinByGameObject(GameObject go)

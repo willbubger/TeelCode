@@ -1,3 +1,5 @@
+RequiredLevel,3
+RecommendedProficiency,25
 Question,Answer1,Answer2,Answer3,Answer4,CorrectIndex
 What is the worst-case time complexity of quicksort?,O(n log n),O(n^2),O(n),O(log n),1
 Which of the following is NOT a characteristic of object-oriented programming?,Encapsulation,Polymorphism,Recursion,Inheritance,2
