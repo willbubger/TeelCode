@@ -51,7 +51,6 @@ public class Login : MonoBehaviour
   ""username_or_email"": ""{username}"",
   ""password"": ""{password}""
 }}";
-
         Debug.Log("Login JSON: " + rawJson);
 
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(rawJson);
@@ -95,7 +94,7 @@ public class Login : MonoBehaviour
 
             string json = request.downloadHandler.text;
             Debug.Log($"[INFO] Raw JSON: {json}");
-            PlayerDataHolder.CurrentPlayer = JsonUtility.FromJson<PlayerStats>(json);
+            JsonUtility.FromJsonOverwrite(json, PlayerDataHolder.CurrentPlayer);
             Debug.Log("User level: " + PlayerDataHolder.CurrentPlayer.level + "!");
             }
     }

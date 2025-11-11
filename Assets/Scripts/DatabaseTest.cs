@@ -41,7 +41,7 @@ public class BackendTester : MonoBehaviour
 
     IEnumerator PostData_Coroutine()
     {
-        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/users/register";
+        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/player/quest_result";
 
         string rawJson = outputArea.text.Trim();
         outputArea.text = "Loading POST...";

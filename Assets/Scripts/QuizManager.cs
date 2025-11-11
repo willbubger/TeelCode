@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
-using System.IO;
-using UnityEngine.UI; // 👈 for text/file handling
+using System;
+using UnityEditor;
+using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class QuizManager : MonoBehaviour
 {
@@ -18,6 +20,7 @@ public class QuizManager : MonoBehaviour
 
     public TextMeshProUGUI QuestionText;
     public int livesLeft;
+    public string FileName;
     public TextAsset quizFile;
     public void UpdateLivesUI()
     {
@@ -26,7 +29,8 @@ public class QuizManager : MonoBehaviour
     }
 
 private void Start()
-{
+    {
+        Debug.Log(PlayerDataHolder.CurrentPlayer.user_id);
     livesLeft = 3;
     UpdateLivesUI();
 
@@ -44,9 +48,9 @@ private void Start()
         TextAsset csv = Resources.Load<TextAsset>($"Quizzes/{selectedQuiz}");
         if (csv != null)
         {
-            LoadQuizFromCSV(csv);
+            FileName = LoadQuizFromCSV(csv);
             questionsLeft = QnA.Count;
-            QnA = QnA.OrderBy(q => Random.value).ToList();
+            QnA = QnA.OrderBy(q => UnityEngine.Random.value).ToList();
             GenerateQuestion();
         }
         else
@@ -59,7 +63,7 @@ private void Start()
     }
 
     // ✅ Reads CSV and populates QnA list
-    void LoadQuizFromCSV(TextAsset csvFile)
+    public string LoadQuizFromCSV(TextAsset csvFile)
     {
         QnA = new List<QuestionAndAnswers>();
         string[] lines = csvFile.text.Split('\n');
@@ -86,6 +90,7 @@ private void Start()
         }
 
         Debug.Log($"Loaded {QnA.Count} questions from {csvFile.name}");
+        return csvFile.name;
     }
     public void Correct()
     {
@@ -111,8 +116,64 @@ private void Start()
 
     void GenerateQuestion()
     {
-        if (questionsLeft <= 0)
+        Debug.Log(PlayerDataHolder.CurrentPlayer.user_id);
+        int charLocation = FileName.IndexOf("_", StringComparison.Ordinal);
+        String Category = FileName.Substring(0, charLocation);
+        Debug.Log(Category);
+
+        string rawJson = "";
+
+        if (FileName.Contains("Easy"))
         {
+            rawJson = $@"{{
+  ""user_id"": {PlayerDataHolder.CurrentPlayer.user_id},
+  ""category"": ""{Category}"",
+  ""difficulty"": ""easy"",
+  ""lives_left"": {livesLeft}
+}}";
+        }
+        else if (FileName.Contains("Medium"))
+        {
+            rawJson = $@"{{
+  ""user_id"": {PlayerDataHolder.CurrentPlayer.user_id},
+  ""category"": ""{Category}"",
+  ""difficulty"": ""medium"",
+  ""lives_left"": ""{livesLeft}""
+}}";
+        }
+        else if(FileName.Contains("Hard"))
+        {
+            rawJson = $@"{{
+  ""user_id"": {PlayerDataHolder.CurrentPlayer.user_id},
+  ""category"": ""{Category}"",
+  ""difficulty"": ""hard"",
+  ""lives_left"": {livesLeft}
+}}";
+        }
+        Debug.Log("Quest complete JSON: " + rawJson);
+
+        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/player/quest_result";
+
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(rawJson);
+
+        using (UnityWebRequest request = new UnityWebRequest(uri, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json; charset=utf-8");
+
+            request.SendWebRequest();
+
+            Debug.Log("Sending JSON: " + rawJson);
+
+            if (request.result != UnityWebRequest.Result.Success)
+                Debug.Log(request.downloadHandler.text);
+            else
+                Debug.Log(request.downloadHandler.text);
+        }
+
+        if (questionsLeft <= 0)
+        {    
             quizCompletePanel.SetActive(true);
             return;
         }
