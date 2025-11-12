@@ -27,7 +27,6 @@ public class Login : MonoBehaviour
         PassField = GameObject.Find("Password").GetComponent<TMP_InputField>();
         GameObject.Find("Login").GetComponent<Button>().onClick.AddListener(LoginUser);
         GameObject.Find("newRegister").GetComponent<Button>().onClick.AddListener(OpenRegister);
-
     }
 
     void Update()

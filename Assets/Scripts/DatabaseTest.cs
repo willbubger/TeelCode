@@ -12,7 +12,6 @@ public class BackendTester : MonoBehaviour
     void Start()
     {
         outputArea = GameObject.Find("OutputArea").GetComponent<TMP_InputField>();
-
         GameObject.Find("GetButton").GetComponent<Button>().onClick.AddListener(GetData);
         GameObject.Find("PostButton").GetComponent<Button>().onClick.AddListener(PostData);
     }
@@ -23,7 +22,9 @@ public class BackendTester : MonoBehaviour
     IEnumerator GetData_Coroutine()
     {
         outputArea.text = "Loading GET...";
-        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/health";
+        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/leaderboard?limit=10";
+
+        Debug.Log(uri);
 
         using (UnityWebRequest request = UnityWebRequest.Get(uri))
         {
@@ -32,7 +33,10 @@ public class BackendTester : MonoBehaviour
             if (request.result != UnityWebRequest.Result.Success)
                 outputArea.text = $"{request.responseCode}: {request.error}";
             else
-                outputArea.text = request.downloadHandler.text;
+            {
+                string json = "{\"players\":" + request.downloadHandler.text + "}";
+                PlayerList leaderboard = JsonUtility.FromJson<PlayerList>(json);
+            }
         }
     }
 

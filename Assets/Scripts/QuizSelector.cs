@@ -5,6 +5,9 @@ using TMPro;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Collections;
+using Newtonsoft.Json;
+using UnityEditor.ShaderGraph.Internal;
+
 public class QuizMenu : MonoBehaviour
 {
     [Header("UI References")]
@@ -14,12 +17,17 @@ public class QuizMenu : MonoBehaviour
     public Transform quizContainer;
     public TextMeshProUGUI LeaderboardText;
     public TextMeshProUGUI LowLevelText;
+    public TextMeshProUGUI FrndsTxt;
+    public TextMeshProUGUI completion;
+    public TMP_InputField addFriend;
 
     [Header("Panels")]
     public GameObject mainPanel;
     public GameObject questPanel;
     public GameObject cosmeticPanel;
     public GameObject leaderboardPanel;
+    public GameObject friendsPanel;
+    public string friendName;
 
     private Dictionary<string, List<TextAsset>> quizzesByCategory = new();
 
@@ -29,6 +37,11 @@ public class QuizMenu : MonoBehaviour
         ShowMainPanel(); // ensure main menu is visible at start
     }
 
+    void Update()
+    {
+        friendName = addFriend.text;
+    }
+
     // -----------------------------
     // PANEL LOGIC
     // -----------------------------
@@ -36,6 +49,7 @@ public class QuizMenu : MonoBehaviour
     {
         mainPanel.SetActive(false);
         questPanel.SetActive(true);
+        GetCompletion();
     }
 
     public void ShowMainPanel()
@@ -43,6 +57,7 @@ public class QuizMenu : MonoBehaviour
         questPanel.SetActive(false);
         cosmeticPanel.SetActive(false);
         leaderboardPanel.SetActive(false);
+        friendsPanel.SetActive(false);
         mainPanel.SetActive(true);
     }
 
@@ -56,6 +71,18 @@ public class QuizMenu : MonoBehaviour
     {
         mainPanel.SetActive(false);
         leaderboardPanel.SetActive(true);
+    }
+
+    public void showFriends()
+    {
+        mainPanel.SetActive(false);
+        friendsPanel.SetActive(true);
+        GetFriends();
+    }
+
+    public void addFriendButton()
+    {
+        PostFriend();
     }
 
     // -----------------------------
@@ -241,6 +268,105 @@ public class QuizMenu : MonoBehaviour
 
                 //LeaderboardText.text = request.downloadHandler.text;
                 //Debug.Log(leaderboard);
+            }
+        }
+    }
+
+    void GetFriends() => StartCoroutine(GetFriends_Coroutine());
+
+    IEnumerator GetFriends_Coroutine()
+    {
+        LeaderboardText.text = "Loading GET...";
+        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/users/" + PlayerDataHolder.CurrentPlayer.user_id + "/friends";
+
+        Debug.Log(uri);
+
+        using (UnityWebRequest request = UnityWebRequest.Get(uri))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+                FrndsTxt.text = $"{request.responseCode}: {request.error}";
+            else
+            {
+                string json = "{\"players\":" + request.downloadHandler.text + "}";
+                PlayerList leaderboard = JsonUtility.FromJson<PlayerList>(json);
+
+                string output = "";
+                foreach (LeaderboardPlayer p in leaderboard.players)
+                {
+                    output += $"{p.username}\n";
+                }
+
+                FrndsTxt.text = output;
+
+                //LeaderboardText.text = request.downloadHandler.text;
+                //Debug.Log(leaderboard);
+            }
+        }
+    }
+
+    void PostFriend() => StartCoroutine(PostFriend_Coroutine());
+
+    IEnumerator PostFriend_Coroutine()
+    {
+        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/users/" + PlayerDataHolder.CurrentPlayer.user_id + "/add_friend/" + friendName;
+
+        Debug.Log(uri);
+
+        using (UnityWebRequest request = new UnityWebRequest(uri, "POST"))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json; charset=utf-8");
+
+            yield return request.SendWebRequest();
+
+
+        }
+    }
+
+    void GetCompletion() => StartCoroutine(GetCompletion_Coroutine());
+
+    IEnumerator GetCompletion_Coroutine()
+    {
+        LeaderboardText.text = "Loading GET...";
+        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/users/" + PlayerDataHolder.CurrentPlayer.user_id + "/progress";
+
+        Debug.Log(uri);
+
+        using (UnityWebRequest request = UnityWebRequest.Get(uri))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+                LeaderboardText.text = $"{request.responseCode}: {request.error}";
+            else
+            {
+                string json = request.downloadHandler.text;
+                PlayerList leaderboard = JsonUtility.FromJson<PlayerList>(json);
+
+                Debug.Log(json);
+                string result = "";
+                foreach (string block in json.Split('}'))
+                {
+                    if (!block.Contains("completed")) continue;
+                    string name = block.Substring(block.IndexOf('"') + 1, block.IndexOf('"', block.IndexOf('"') + 1) - 1);
+                    int completed = int.Parse(block.Substring(block.IndexOf("completed\":") + 11).Split(',')[0]);
+                    int total = int.Parse(block.Substring(block.IndexOf("total\":") + 7).Split(',')[0]);
+                    result += $"{name} {completed}/{total}\n";
+                }
+                Debug.Log(result);
+                completion.text = result;
+
+                /*
+                string output = "";
+                foreach (LeaderboardPlayer p in leaderboard.players)
+                {
+                    output += $"{p.username}: Level {p.level}\n";
+                }
+
+                LeaderboardText.text = output;
+                */
             }
         }
     }

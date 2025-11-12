@@ -4,5 +4,5 @@ Question,Answer1,Answer2,Answer3,Answer4,CorrectIndex
 What is the time complexity of inserting an element into a heap?,O(1),O(log n),O(n),O(n log n),1
 Which data structure provides the best average case for priority queue operations?,Array,Linked List,Heap,Hash Map,2
 In a graph represented by adjacency matrix, what is the space complexity?,O(V),O(V+E),O(V^2),O(E log V),2
-Which of the following algorithms uses a queue data structure?,Depth First Search (DFS),Breadth First Search (BFS),Dijkstra’s using priority queue,Topological sort (DFS based),1
+Which of the following algorithms uses a queue data structure?,Depth First Search (DFS),Breadth First Search (BFS),Dijkstra's using priority queue,Topological sort (DFS based),1
 What is the amortized time complexity of inserting into a dynamic array (like vector in C++)?,O(1),O(n),O(log n),O(n log n),0

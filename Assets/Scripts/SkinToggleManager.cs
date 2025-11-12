@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class SkinToggleManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class SkinToggleManager : MonoBehaviour
     [Tooltip("Which index to show on Start (0-based).")]
     public int defaultIndex = 0;
     public List<SSkinInfo> skinInfos = new List<SSkinInfo>();
+    public TextMeshProUGUI LevelReq;
 
     void Start()
     {
@@ -55,12 +57,15 @@ public class SkinToggleManager : MonoBehaviour
 
             if (playerLevel < requiredLevel)
             {
+                LevelReq.text = $"Level {requiredLevel} required";
+                LevelReq.gameObject.SetActive(true);
                 Debug.Log($"⛔ Skin locked! Requires level {requiredLevel}, but player is only level {playerLevel}.");
                 return;
             }
         }
 
         // ✅ If unlocked, apply skin
+        LevelReq.gameObject.SetActive(false);
         for (int i = 0; i < skins.Count; i++)
             if (skins[i] != null)
                 skins[i].SetActive(i == index);

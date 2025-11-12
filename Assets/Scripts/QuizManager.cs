@@ -6,6 +6,7 @@ using System;
 using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class QuizManager : MonoBehaviour
 {
@@ -121,6 +122,7 @@ private void Start()
         String Category = FileName.Substring(0, charLocation);
         Debug.Log(Category);
 
+
         string rawJson = "";
 
         if (FileName.Contains("Easy"))
@@ -141,7 +143,7 @@ private void Start()
   ""lives_left"": ""{livesLeft}""
 }}";
         }
-        else if(FileName.Contains("Hard"))
+        else if (FileName.Contains("Hard"))
         {
             rawJson = $@"{{
   ""user_id"": {PlayerDataHolder.CurrentPlayer.user_id},
@@ -156,24 +158,9 @@ private void Start()
 
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(rawJson);
 
-        using (UnityWebRequest request = new UnityWebRequest(uri, "POST"))
-        {
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json; charset=utf-8");
-
-            request.SendWebRequest();
-
-            Debug.Log("Sending JSON: " + rawJson);
-
-            if (request.result != UnityWebRequest.Result.Success)
-                Debug.Log(request.downloadHandler.text);
-            else
-                Debug.Log(request.downloadHandler.text);
-        }
-
         if (questionsLeft <= 0)
-        {    
+        {
+            StartCoroutine(SendQuestResult(uri, bodyRaw, rawJson, Category));
             quizCompletePanel.SetActive(true);
             return;
         }
@@ -182,5 +169,26 @@ private void Start()
         QuestionText.text = QnA[currentQuestion].question;
         questionsLeft--;
         SetAnswers();
+    }
+    
+    IEnumerator SendQuestResult(string uri, byte[] bodyRaw, string rawJson, string Category)
+    {
+        Debug.Log(rawJson);
+        Debug.Log(Category);
+        using (UnityWebRequest request = new UnityWebRequest(uri, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json; charset=utf-8");
+
+            yield return request.SendWebRequest();
+
+            Debug.Log("Sending JSON: " + rawJson);
+
+            if (request.result != UnityWebRequest.Result.Success)
+                Debug.Log(request.downloadHandler.text);
+            else
+                Debug.Log(request.downloadHandler.text);
+        }
     }
 }
