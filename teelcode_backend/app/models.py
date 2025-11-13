@@ -1,11 +1,13 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, Date, ForeignKey, Enum, JSON, TIMESTAMP
+from sqlalchemy import (
+    Column, Integer, String, Text, Boolean, Date, ForeignKey, Enum, JSON, TIMESTAMP, DateTime, func
+)
 from sqlalchemy.orm import relationship
 from app.database import Base
-import enum
-
+from datetime import datetime
 
 
 # TABLE MODELS
+
 
 class User(Base):
     __tablename__ = "users"
@@ -14,8 +16,13 @@ class User(Base):
     username = Column(String(50), unique=True, nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
 
+    # streak tracking
+    login_streak = Column(Integer, default=0)
+    last_login = Column(DateTime, nullable=True)
+
+    # Relationships
     stats = relationship("PlayerStats", back_populates="user", uselist=False)
     inventory = relationship("Inventory", back_populates="user")
 
@@ -37,11 +44,13 @@ class Quest(Base):
     __tablename__ = "quests"
 
     quest_id = Column(Integer, primary_key=True, index=True)
+    category = Column(String(100), nullable=False)
     title = Column(String(100), nullable=False)
     difficulty = Column(Enum("easy", "medium", "hard", name="difficulty_enum"), default="easy")
     xp_reward = Column(Integer, nullable=False, default=10)
     proficiency_gain = Column(Integer, nullable=False, default=0)
     description = Column(Text)
+
 
 
 class Question(Base):
@@ -59,14 +68,16 @@ class QuestAttempt(Base):
     __tablename__ = "quest_attempts"
 
     attempt_id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"))
-    quest_id = Column(Integer, ForeignKey("quests.quest_id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    quest_id = Column(Integer, ForeignKey("quests.quest_id"), nullable=False)
     score = Column(Integer, default=0)
     completed = Column(Boolean, default=False)
     xp_earned = Column(Integer, default=0)
     prof_change = Column(Integer, default=0)
-    attempt_started = Column(TIMESTAMP)
-    attempt_ended = Column(TIMESTAMP)
+
+    # Fix: let MySQL auto-handle timestamps
+    attempt_started = Column(DateTime, nullable=False, server_default=func.now())
+    attempt_ended = Column(DateTime, nullable=True)
 
 
 class Cosmetic(Base):
@@ -91,9 +102,23 @@ class Inventory(Base):
     user = relationship("User", back_populates="inventory")
 
 
-
 # INITIALIZER
 
 def init_models():
     from app.database import engine
     Base.metadata.create_all(bind=engine)
+
+# FRIENDS
+
+class Friend(Base):
+    __tablename__ = "friends"
+
+    friend_id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"))
+    friend_user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"))
+    added_at = Column(TIMESTAMP)
+
+    # Optional relationships for clarity
+    user = relationship("User", foreign_keys=[user_id])
+    friend = relationship("User", foreign_keys=[friend_user_id])
+
