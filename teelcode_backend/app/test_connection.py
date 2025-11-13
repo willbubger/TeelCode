@@ -4,6 +4,6 @@ from app.database import engine
 try:
     with engine.connect() as conn:
         result = conn.execute(text("SELECT NOW()"))
-        print("✅ Connected successfully!", result.scalar())
+        print(" Connected successfully!", result.scalar())
 except Exception as e:
-    print("❌ Connection failed:", e)
+    print(" Connection failed:", e)

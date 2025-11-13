@@ -1,9 +1,18 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, constr
+
+
+# USER SCHEMAS
 
 class UserCreate(BaseModel):
-    username: str
+    username: constr(min_length=3, max_length=20)
     email: EmailStr
-    password: str
+    password: constr(min_length=6, max_length=64)
+
+
+class UserLogin(BaseModel):
+    username_or_email: str = Field(..., min_length=3)
+    password: str = Field(..., min_length=6)
+
 
 class UserOut(BaseModel):
     user_id: int
@@ -11,10 +20,11 @@ class UserOut(BaseModel):
     email: EmailStr
 
     class Config:
-        orm_mode = True
-class UserLogin(BaseModel):
-    username_or_email: str
-    password: str
+        from_attributes = True  # Replaces orm_mode for Pydantic v2
+
+
+# PLAYER STATS SCHEMAS
+
 class PlayerStats(BaseModel):
     level: int
     xp: int
@@ -25,11 +35,14 @@ class PlayerStats(BaseModel):
 
 
 class XPUpdate(BaseModel):
-    xp_gain: int
+    xp_gain: int = Field(..., ge=0, description="Amount of XP to add")
 
 
 class ProficiencyUpdate(BaseModel):
-    change: int
+    change: int = Field(..., description="Change in proficiency (can be negative)")
+
+
+#  LEADERBOARD SCHEMA
 
 class LeaderboardEntry(BaseModel):
     username: str
@@ -41,9 +54,10 @@ class LeaderboardEntry(BaseModel):
         from_attributes = True
 
 
-# QUEST RESULT SCHEMA
+#  QUEST RESULT SCHEMA
 
 class QuestResult(BaseModel):
     user_id: int
-    difficulty: str
-    lives_left: int
+    category: str
+    difficulty: str = Field(..., pattern="^(easy|medium|hard)$")
+    lives_left: int = Field(..., ge=0, le=3, description="Remaining lives after quest")
