@@ -95,6 +95,7 @@ public class Login : MonoBehaviour
             Debug.Log($"[INFO] Raw JSON: {json}");
             JsonUtility.FromJsonOverwrite(json, PlayerDataHolder.CurrentPlayer);
             Debug.Log("User level: " + PlayerDataHolder.CurrentPlayer.level + "!");
+            Debug.Log("Streak: " + PlayerDataHolder.CurrentPlayer.login_streak + "!");
             }
     }
 }
