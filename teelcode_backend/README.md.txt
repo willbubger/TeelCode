@@ -1,88 +1,48 @@
-# ⚙️ TeelCode Backend Setup Instructions
+TeelCode Backend Build Instructions
 
-This backend powers the TeelCode project and connects directly to a Google Cloud SQL (MySQL) database.  
-Follow these steps to run the backend locally on your machine.
+1. Prerequisites
+- Install Python 
+- Install Git
+- Install pip
+- Install MySQL Server or use provided Cloud SQL connection
 
+2. Clone Repository
+git clone https://github.com/willbubger/TeelCode.git
+cd TeelCode/backend
 
----
-
-
-## 1️⃣ Prerequisites
-
-Before starting, make sure you have:
-
-- Python 3.10+ installed  
-- pip (Python package manager)  
-- Access to the TeelCode Cloud SQL instance 
-- Optionally, MySQL Workbench if you want to view or edit the database manually
-
----
-
-## 2️⃣ Clone the Repository
-
-Open terminal or PowerShell and run:
-
-```bash
-git clone https://github.com/<your_username>/TeelCode.git
-cd TeelCode/teelcode_backend
-
----
-
-##3⃣ Create virtual envioment
-
-this creates isolated python environment for project.
-
+3. Create Virtual Environment
 python -m venv .venv
+source .venv/bin/activate (Linux/Mac)
+.venv\Scripts\activate (Windows)
 
-Activate it:
-
-source .venv/bin/activate
-
----
-
-
-##4️⃣ Install dependencies
-
-with the environment activated, install the required packages:
-
+4. Install Dependencies
 pip install -r requirements.txt
 
----
+5. Configure Environment Variables
+Create .env file with:
+DATABASE_URL=mysql+pymysql://USER:PASSWORD@HOST:3306/teelcode_app
 
-##5️⃣ Create a .env file
+6. Initialize Database
+Run MySQL:
+mysql -u USER -p
+CREATE DATABASE teelcode_app;
 
-in teelcode_backend folder, and it should look like this:
+7. Run Backend Locally
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
 
+8. Test API
+Open browser:
+http://localhost:8080/docs
 
-DB_USER=teelcode_native
-DB_PASSWORD=Eric2010*
-DB_HOST=35.237.7.170
-DB_PORT=3306
-DB_NAME=teelcode_app
+9. Deploy to Cloud Run
+gcloud run deploy teelcode-backend --source . --region us-east1 --platform managed
+--allow-unauthenticated --set-env-vars "DATABASE_URL=YOUR_URL"
 
+10. CSV Quest Import
+Place CSVs in quests_csv/ directory.
+Run:
+python import_quests.py
 
----
-
-##6️⃣ Test the database connection
-
-run this to verify your backend can connect to cloud sql:
-
-python app/test_connection.py
-
-if successful you'll see:
-
-✅ Connection successful!
-
-if it failed either .env file is incorrect or your IP  isn't allowed in cloud sql authorized networks (ask Lj to add you)
-
----
-
-##7️⃣ Run the backend server
-
-python app/main.py
-
-
-then open your browser to:
-http://127.0.0.1:8000
-
-you should now see the docs page for Teelcode backend
+11. Notes
+- Make sure MySQL accepts external connections
+- Ensure MySQL user has correct permissions
