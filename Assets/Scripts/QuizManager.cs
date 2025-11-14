@@ -32,34 +32,34 @@ public class QuizManager : MonoBehaviour
 private void Start()
     {
         Debug.Log(PlayerDataHolder.CurrentPlayer.user_id);
-    livesLeft = 3;
-    UpdateLivesUI();
+        livesLeft = 3;
+        UpdateLivesUI();
 
-    // ✅ Load quiz data from CSV first
-    if (quizFile != null)
-    {
-        LoadQuizFromCSV(quizFile);
-    }
-    else
-    {
-        // Default load from Resources folder (in case not assigned)
-        string selectedQuiz = PlayerPrefs.GetString("SelectedQuiz", "CSBasics");
-        Debug.Log("Selected quiz: " + selectedQuiz);
-
-        TextAsset csv = Resources.Load<TextAsset>($"Quizzes/{selectedQuiz}");
-        if (csv != null)
+        // ✅ Load quiz data from CSV first
+        if (quizFile != null)
         {
-            FileName = LoadQuizFromCSV(csv);
-            questionsLeft = QnA.Count;
-            QnA = QnA.OrderBy(q => UnityEngine.Random.value).ToList();
-            GenerateQuestion();
+            LoadQuizFromCSV(quizFile);
         }
         else
         {
-            Debug.LogError($"⚠️ Could not load quiz: {selectedQuiz}");
-            return;
+            // Default load from Resources folder (in case not assigned)
+            string selectedQuiz = PlayerPrefs.GetString("SelectedQuiz", "CSBasics");
+            Debug.Log("Selected quiz: " + selectedQuiz);
+
+            TextAsset csv = Resources.Load<TextAsset>($"Quizzes/{selectedQuiz}");
+            if (csv != null)
+            {
+                FileName = LoadQuizFromCSV(csv);
+                questionsLeft = QnA.Count;
+                QnA = QnA.OrderBy(q => UnityEngine.Random.value).ToList();
+                GenerateQuestion();
+            }
+            else
+            {
+                Debug.LogError($"⚠️ Could not load quiz: {selectedQuiz}");
+                return;
+            }
         }
-    }
 
     }
 

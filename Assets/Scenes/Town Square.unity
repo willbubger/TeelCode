@@ -3946,6 +3946,8 @@ MonoBehaviour:
   LevelTxt: {fileID: 533178473}
   StreakTxt: {fileID: 1415196092}
   NextQuiz: {fileID: 333020057}
+  CurrentLowest: 2147483647
+  RecQuiz: 
 --- !u!114 &826296428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5169,9 +5171,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'CSBasics: 2/3
+  m_text: 'CSBasics: N/A
 
-    Data Structures: 1/3'
+    Data Structures: N/A'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

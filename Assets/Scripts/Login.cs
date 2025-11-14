@@ -71,31 +71,10 @@ public class Login : MonoBehaviour
                 Debug.Log(json);
                 PlayerDataHolder.CurrentPlayer = JsonUtility.FromJson<PlayerStats>(json);
                 Debug.Log(PlayerDataHolder.CurrentPlayer.user_id);
-                yield return StartCoroutine(GetInfo_Coroutine());
                 SceneManager.LoadScene("Town Square");
             }
             FailureText.SetActive(true);
             //Debug.Log("Login Response: " + request.downloadHandler.text);
         }
-    }
-
-    void GetInfo() => StartCoroutine(GetInfo_Coroutine());
-
-    IEnumerator GetInfo_Coroutine()
-    {
-        string uri = "https://teelcode-backend-148419202297.us-east1.run.app/player/" + PlayerDataHolder.CurrentPlayer.user_id;
-
-        Debug.Log(uri);
-
-        using (UnityWebRequest request = UnityWebRequest.Get(uri))
-        {
-            yield return request.SendWebRequest();
-
-            string json = request.downloadHandler.text;
-            Debug.Log($"[INFO] Raw JSON: {json}");
-            JsonUtility.FromJsonOverwrite(json, PlayerDataHolder.CurrentPlayer);
-            Debug.Log("User level: " + PlayerDataHolder.CurrentPlayer.level + "!");
-            Debug.Log("Streak: " + PlayerDataHolder.CurrentPlayer.login_streak + "!");
-            }
     }
 }
